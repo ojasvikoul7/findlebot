@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fyndi Chatbot</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box;}
+body, html {height:100%; font-family: Arial, sans-serif; color:#fff; overflow-x:hidden;}
+
+.hero {
+  position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; overflow:hidden;
+}
+.hero video { width:100%; height:100%; object-fit:cover; display:block; }
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25); /* adjust 0.25 for brightness */
+  z-index: 0; /* behind your content */
+  pointer-events: none; /* lets clicks go through */
+}
+
+
+.navbar {
+  position: fixed; top:0; left:0; width:100%; height:70px;
+  display:flex; justify-content: space-between; align-items:center;
+  padding:0 50px; background: rgba(0,0,0,0.35); backdrop-filter: blur(15px);
+  border-bottom:2px solid rgba(255,255,255,0.1); z-index:10;
+}
+.navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; font-size:1.1rem; }
+.navbar a:hover { color:#ff0; }
+
+.sidebar {
+  position: fixed; top:70px; left:0; width:220px; height:calc(100% - 70px);
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); padding:25px; border-right:2px solid rgba(255,255,255,0.1);
+}
+.sidebar a { display:block; margin-bottom:20px; color:#fff; text-decoration:none; font-weight:bold; font-size:1rem; }
+.sidebar a:hover { color:yellow; }
+
+.main-content {
+  margin-left:220px; padding:120px 30px 30px 30px;
+  display:flex; flex-direction:column; align-items:center;
+}
+
+.frosty-box {
+  max-width:700px; width:100%;
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
+  border:2px solid rgba(255,255,255,0.15); border-radius:20px;
+  padding:12px;
+  display:flex; flex-direction:column;
+  height:500px;
+}
+
+.bot-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 15px;
+}
+.bot-page-header img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20%;
+}
+.bot-page-header .bot-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  margin-left:-8px;
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.chat-window {
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  margin-bottom:10px;
+  display:flex; flex-direction:column;
+  gap:10px;
+}
+
+.chat-msg {
+  display:flex; align-items:flex-start; gap:2px; max-width:80%;
+  word-wrap:break-word;
+}
+.chat-msg.user { align-self:flex-end; flex-direction:row-reverse; }
+.chat-msg.user .bubble { background: rgba(255,255,255,0.2); }
+.chat-msg.bot .bubble { background: rgba(255,255,255,0.05); 
+margin-left:-5px;}
+
+.bubble {
+  padding:10px 15px; border-radius:15px;
+  display:inline-block;
+}
+
+.avatar {
+  width: 60px; height:60px; border-radius:70%;
+  flex-shrink:0;
+}
+
+.input-area {
+  display:flex;
+}
+
+input[type="text"] {
+  padding:10px 15px; border-radius:15px; border:none; outline:none; flex:1;
+  margin-right:10px; background: rgba(255,255,255,0.05); color:#fff;
+}
+button {
+  padding:10px 20px; border:none; border-radius:15px;
+  background: rgba(255,255,255,0.1); color:#fff; cursor:pointer;
+}
+button:hover { background: rgba(255,255,255,0.2); }
+
+.wanna-btn {
+  margin-top:5px; padding:5px 10px; font-size:0.9rem;
+  border-radius:10px; background: rgba(255,255,255,0.2); cursor:pointer;
+}
+.wanna-btn:hover { background: rgba(255,255,255,0.35); }
+
+.full-post-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 15px;
+  padding: 10px 15px;
+  margin-top: 5px;
+}
+
+.full-post-card div { margin-bottom: 5px; }
+.full-post-card .name { font-weight: bold; }
+
+::-webkit-scrollbar {width:6px;}
+::-webkit-scrollbar-thumb {background:rgba(255,255,255,0.3); border-radius:3px;}
+button.send-icon {
+  background: rgba(255,255,255,0.1);
+  border:none; border-radius:50%;
+  width:45px; height:45px; display:flex;
+  align-items:center; justify-content:center;
+  cursor:pointer;
+}
+button.send-icon:hover { background: rgba(255,255,255,0.2); }
+button.send-icon img { width:22px; height:22px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <video autoplay muted loop>
+    <source src="61831fdb71165dd9286c3c416a061404.mov" type="video/mp4">
+    <div class="hero-overlay"></div>
+  </video>
+</div>
+
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+   <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+</div>
+
+<div class="sidebar">
+  <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+</div>
+
+<div class="main-content">
+  <div class="frosty-box">
+    <div class="bot-page-header">
+      <img src="echo.png" alt="Bot Logo" id="botLogo">
+      <div class="bot-name">Echo</div>
+    </div>
+    <div class="chat-window" id="chatWindow"></div>
+    <div id="suggestionsContainer" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;"></div>
+    <div class="input-area">
+  <input type="text" id="userInput" placeholder="Ask Echo..." onkeydown="if(event.key==='Enter'){sendMsg()}">
+  <button class="send-icon" onclick="sendMsg()">
+   <img src="https://cdn-icons-png.flaticon.com/512/60/60525.png" alt="Send">
+  </button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDW4IF5mGdiBIMId6dOyV6ONt-OX_YEoAg",
+  authDomain: "findle-80895.firebaseapp.com",
+  databaseURL: "https://findle-80895-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "findle-80895",
+  storageBucket: "findle-80895.appspot.com",
+  messagingSenderId: "494230063495",
+  appId: "1:494230063495:web:963556b2caab838c1e2b22",
+  measurementId: "G-4V4H12932C"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const chatWindow = document.getElementById('chatWindow');
+const userAvatar = "";
+const botAvatar = "echo.png";
+
+const keywords = ["wallet","keys","sunglasses","dog","car","phone","bag","id","earbuds","backpack"];
+const greetings = ["hi","hello","hey","yo","bro","greetings"];
+const greetingResponses = ["Hey there!","Hello!","Hi!","Yo! How can I help you?","Hi! Echo here!"];
+
+let posts = {};
+
+function addMsg(msg, sender){
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + sender;
+  const avatar = document.createElement('img');
+  avatar.src = sender==='user'? userAvatar : botAvatar;
+  avatar.className = 'avatar';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = msg;
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+window.sendMsg = function(){
+  const input = document.getElementById('userInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  addMsg(msg,'user');
+  input.value='';
+  setTimeout(()=>{ getResponse(msg) }, 300);
+}
+
+function getResponse(msg){
+  const input = msg.toLowerCase();
+
+  if(greetings.some(g=>input.includes(g))){
+    const r = greetingResponses[Math.floor(Math.random()*greetingResponses.length)];
+    addMsg(r,'bot');
+    return;
+  }
+
+  const foundKeywords = keywords.filter(k=>input.includes(k));
+  if(foundKeywords.length===0){
+    addMsg("Hmm, I couldn't find anything matching that. Try another keyword!",'bot');
+    const createBtn = document.createElement('button');
+    createBtn.className = 'wanna-btn';
+    createBtn.textContent = 'Wanna create a post?';
+    createBtn.onclick = () => { window.location.href='createpost.html'; };
+    const btnContainer = document.createElement('div');
+    btnContainer.style.marginTop='5px';
+    btnContainer.appendChild(createBtn);
+    chatWindow.appendChild(btnContainer);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    return;
+  }
+
+  const matches = Object.values(posts).filter(p => 
+    foundKeywords.some(k => p.text.toLowerCase().includes(k))
+  );
+
+  if(matches.length===0){
+    addMsg("Hmm, I couldn't find any posts with that item.",'bot');
+    const createBtn = document.createElement('button');
+    createBtn.className = 'wanna-btn';
+    createBtn.textContent = 'Wanna create a post?';
+    createBtn.onclick = () => { window.location.href='createpost.html'; };
+    const btnContainer = document.createElement('div');
+    btnContainer.style.marginTop='5px';
+    btnContainer.appendChild(createBtn);
+    chatWindow.appendChild(btnContainer);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    return;
+  }
+
+  matches.forEach(p=>{
+    const div = document.createElement('div');
+    div.className='chat-msg bot';
+    const avatar = document.createElement('img');
+    avatar.src = botAvatar;
+    avatar.className='avatar';
+    const bubble = document.createElement('div');
+    bubble.className='bubble';
+    bubble.textContent = `${p.user}: ${p.text.substring(0,100)}${p.text.length>100?'...':''}`;
+    div.appendChild(avatar);
+    div.appendChild(bubble);
+    chatWindow.appendChild(div);
+
+    const contact = p.contact || `+91 9${Math.floor(Math.random()*900000000+100000000)}`;
+
+    const btnContainer = document.createElement('div');
+    btnContainer.style.display='flex';
+    btnContainer.style.gap='10px';
+    btnContainer.style.marginBottom='10px';
+
+    const wannaBtn = document.createElement('button');
+    wannaBtn.className='wanna-btn';
+    wannaBtn.textContent='Wanna have a look?';
+    wannaBtn.onclick=()=>{
+      const fullMsg = `Full post by ${p.user}:\n"${p.text}"\nContact: ${contact}`;
+      addMsg(fullMsg,'bot');
+    }
+
+    const noThanksBtn = document.createElement('button');
+    noThanksBtn.className='wanna-btn';
+    noThanksBtn.textContent='No thanks';
+    noThanksBtn.onclick=()=>{
+      const createBtn = document.createElement('button');
+      createBtn.className='wanna-btn';
+      createBtn.textContent='Wanna create a post?';
+      createBtn.onclick=()=>{ window.location.href='createpost.html'; };
+      const container=document.createElement('div');
+      container.style.marginTop='5px';
+      container.appendChild(createBtn);
+      chatWindow.appendChild(container);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    btnContainer.appendChild(wannaBtn);
+    btnContainer.appendChild(noThanksBtn);
+    chatWindow.appendChild(btnContainer);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  });
+}
+
+// Firebase listener
+const postsRef = ref(db,'posts');
+onValue(postsRef, (snapshot)=>{
+  posts = snapshot.val() || {};
+});
+
+// 👇 Automated quirky welcome message
+window.addEventListener("load", () => {
+  setTimeout(()=>{
+    addMsg("👋 Hey there! Echo here. Lost or found something? I got you!", "bot");
+  }, 500);
+});
+const suggestions = ["lost my id card", "bagpack", "airbuds", ]; // whatever you want
+
+const suggestionsContainer = document.getElementById('suggestionsContainer');
+
+function renderSuggestions() {
+  suggestionsContainer.innerHTML = ""; // clear existing
+  suggestions.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'wanna-btn';
+    btn.textContent = s;
+    btn.onclick = () => {
+      // send as if user typed
+      const input = document.getElementById('userInput');
+      input.value = s;
+      sendMsg(); // trigger sending
+    };
+    suggestionsContainer.appendChild(btn);
+  });
+}
+
+// Call this once on load
+renderSuggestions();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Profile - Findle</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body, html{height:100%;background:#121212;color:#fff;overflow:hidden;}
+
+/* Background video & overlay */
+.hero{position:relative;width:100%;height:100vh;display:flex;justify-content:center;align-items:center;}
+.hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;}
+.overlay{position:absolute;width:100%;height:100%;background:linear-gradient(135deg, rgba(255,0,150,0.3), rgba(0,204,255,0.3));mix-blend-mode:overlay;pointer-events:none;z-index:-1;}
+
+/* Navbar */
+.navbar{
+  width:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+  position:fixed;
+  top:0;
+  z-index:10;
+}
+.navbar .logo{color:#fff;font-size:1.5rem;font-weight:bold;}
+.navbar .nav-links a{
+  color:#fff;text-decoration:none;margin-left:15px;font-weight:500;transition:0.3s;
+}
+.navbar .nav-links a:hover{color:#ff69b4;}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;left:0;top:60px;width:200px;height:100%;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(15px);
+  padding-top:20px;display:flex;flex-direction:column;
+}
+.sidebar a{color:#fff;padding:10px 20px;text-decoration:none;margin-bottom:10px;border-radius:10px;transition:0.3s;}
+.sidebar a:hover{background:rgba(255,255,255,0.1);}
+
+/* Main content */
+.main-content{
+  margin-left:220px;padding:100px 30px 30px 30px;
+}
+
+/* Profile Box */
+.profile-box{
+  max-width:500px;margin:auto;background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border-radius:20px;padding:30px;text-align:center;
+}
+.profile-box h2{margin-bottom:20px;}
+.profile-box input, .profile-box textarea{
+  width:100%;padding:12px;margin:10px 0;border-radius:50px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:1rem;text-align:center;
+}
+.profile-box input::placeholder, .profile-box textarea::placeholder{color:rgba(255,255,255,0.7);}
+.profile-box textarea{resize:none;height:100px;text-align:left;}
+.profile-box button{
+  padding:12px 25px;border-radius:50px;border:none;background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);color:#fff;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:0.3s;
+}
+.profile-box button:hover{transform:scale(1.05);}
+
+/* Profile Image */
+.profile-img{width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:15px;border:3px solid #fff;}
+.avatar-options{display:flex;justify-content:center;margin:10px 0;}
+.avatar-options img{width:60px;height:60px;border-radius:50%;margin:0 5px;cursor:pointer;border:2px solid transparent;transition:0.3s;}
+.avatar-options img.selected{border-color:#ff69b4;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <video autoplay muted loop>
+    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Findle</div>
+    <div class="nav-links">
+     <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="profile-box">
+      <h2>Your Profile</h2>
+      <img src="https://i.pravatar.cc/150" id="profile-img" class="profile-img" alt="Profile Picture">
+      <input type="text" id="name" placeholder="Your Name">
+      <textarea id="bio" placeholder="Bio (optional)"></textarea>
+      <div>Choose an Avatar:</div>
+      <div class="avatar-options">
+        <img src="https://i.pravatar.cc/60?img=1" class="avatar" alt="">
+        <img src="https://i.pravatar.cc/60?img=2" class="avatar" alt="">
+        <img src="https://i.pravatar.cc/60?img=3" class="avatar" alt="">
+      </div>
+      <input type="file" id="upload-img" accept="image/*">
+      <button id="save-btn">Save Profile</button>
+      <div class="message" id="message"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-storage.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDW4IF5mGdiBIMId6dOyV6ONt-OX_YEoAg",
+  authDomain: "findle-80895.firebaseapp.com",
+  projectId: "findle-80895",
+  storageBucket: "findle-80895.appspot.com",
+  messagingSenderId: "494230063495",
+  appId: "1:494230063495:web:963556b2caab838c1e2b22",
+  measurementId: "G-4V4H12932C"
+};
+
+// Init Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const profileImg = document.getElementById('profile-img');
+const nameInput = document.getElementById('name');
+const bioInput = document.getElementById('bio');
+const saveBtn = document.getElementById('save-btn');
+const message = document.getElementById('message');
+const avatarImgs = document.querySelectorAll('.avatar');
+const uploadInput = document.getElementById('upload-img');
+
+let selectedAvatar = null;
+
+// Select avatar
+avatarImgs.forEach(img=>{
+  img.addEventListener('click', ()=>{
+    avatarImgs.forEach(i=>i.classList.remove('selected'));
+    img.classList.add('selected');
+    selectedAvatar = img.src;
+    profileImg.src = selectedAvatar;
+  });
+});
+
+// Upload image preview
+uploadInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = ()=>{ profileImg.src = reader.result; selectedAvatar=null; };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Load profile if exists
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    const docRef = doc(db, "profiles", user.uid);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()){
+      const data = docSnap.data();
+      nameInput.value = data.name || "";
+      bioInput.value = data.bio || "";
+      profileImg.src = data.pfp || "https://i.pravatar.cc/150";
+    }
+  }
+});
+
+// Save profile
+saveBtn.addEventListener('click', async ()=>{
+  const user = auth.currentUser;
+  if(!user){ message.textContent="Login first!"; return; }
+
+  message.style.color = "#fff";
+  let pfpURL = profileImg.src;
+
+  if(uploadInput.files[0]){
+    const fileRef = ref(storage, `profile_pics/${user.uid}`);
+    await uploadBytes(fileRef, uploadInput.files[0]);
+    pfpURL = await getDownloadURL(fileRef);
+  }
+
+  try{
+    await setDoc(doc(db, "profiles", user.uid), {
+      name: nameInput.value,
+      bio: bioInput.value,
+      pfp: pfpURL
+    });
+    message.style.color="#aaffaa";
+    message.textContent="Profile updated successfully!";
+  }catch(err){
+    message.style.color="#ffbaba";
+    message.textContent=err.message;
+  }
+});
+</script>
+
+</body>
+</html>

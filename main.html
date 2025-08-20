@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Findle Landing Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body,html{height:100%;overflow-x:hidden;}
+
+/* Navbar */
+.navbar{
+  position:fixed;top:0;left:0;width:100%;height:60px;
+  padding:0 40px;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,0.35);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.15);z-index:1000;
+}
+.navbar a{text-decoration:none;color:#fff;margin-left:30px;font-weight:600;font-size:1.1rem;transition:0.3s;}
+.navbar a:hover{color:#ff66ff;}
+
+/* Hero */
+.hero{
+  position:relative;height:100vh;display:flex;
+  justify-content:center;align-items:center;overflow:hidden;
+}
+
+/* BG Video */
+.hero video{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;z-index:-2;
+}
+
+/* Overlay */
+.overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.25);
+  z-index:-1;
+}
+
+/* Text */
+.slide-text{
+  position:relative;text-align:center;color:#fff;
+  animation:fadeInUp 1.5s ease forwards;z-index:10;
+}
+.slide-text h1{
+  font-size:3.5rem;margin-bottom:20px;color:#fff;transition:opacity 0.5s ease;
+}
+.slide-text p{
+  font-size:1.6rem;margin-bottom:30px;color:#fff;
+}
+
+/* CTA Button - Glassy Water Drop */
+.cta{
+  position:relative;overflow:hidden;
+  padding:22px 70px;font-size:1.3rem;font-weight:600;
+  border-radius:80px;border:none;cursor:pointer;color:#fff;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(25px) saturate(180%);
+  -webkit-backdrop-filter:blur(25px) saturate(180%);
+  border:2px solid rgba(255,255,255,0.4);
+  box-shadow:0 8px 30px rgba(0,0,0,0.5), inset 0 0 25px rgba(255,255,255,0.2);
+  transition:all 0.3s ease;
+  z-index:10;
+}
+.cta::before{
+  content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+  border-radius:inherit;
+  background:linear-gradient(145deg,rgba(255,255,255,0.6),rgba(255,255,255,0));
+  opacity:0.6;
+}
+.cta:hover{transform:translateY(-4px) scale(1.07);}
+.cta:active{transform:scale(0.96);}
+  
+/* Animations */
+@keyframes fadeInUp{
+  0%{opacity:0;transform:translateY(30px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+    <a href="">Home</a>
+    <a href="">Echo Bot</a>
+    <a href="">Staff Locator</a>
+    <a href="">Your Profile</a>
+    <a href="">Create Post</a>
+    <a href="">Your posts</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <!-- Background video -->
+  <video autoplay muted loop playsinline>
+    <source src="185c6cb666179a02d21b0edf03179d84 (3).mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="overlay"></div>
+
+  <!-- Slideshow text -->
+  <div class="slide-text">
+    <h1>Welcome to Findle</h1>
+    <p>Lost something? Don’t worry, we got you.</p>
+    <button class="cta" onclick="location.href='login.html'">Get Started</button>
+  </div>
+</div>
+
+<script>
+const headlines = [
+  "Welcome to Findle",
+  "Featuring ECHO BOT",
+  "Connect. Find. Return."
+];
+let i=0;
+const headlineEl = document.querySelector(".slide-text h1");
+setInterval(()=>{
+  headlineEl.style.opacity=0;
+  setTimeout(()=>{
+    headlineEl.textContent=headlines[i];
+    headlineEl.style.opacity=1;
+    i=(i+1)%headlines.length;
+  },500);
+},3000); // every 3 seconds
+</script>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#111; color:#fff; }
+
+  /* ---------- VIDEO BACKGROUND ---------- */
+  .bg-video {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:-1;
+    overflow:hidden;
+  }
+  .bg-video video {
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar {
+    position: fixed;
+    top:0; left:0; width:100%;
+    height:60px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding:0 30px;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(15px);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    z-index:10;
+  }
+  .navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    position: fixed;
+    top:60px; left:0;
+    width:200px;
+    height:calc(100% - 60px);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(15px);
+    padding:20px;
+    border-right:1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar a { display:block; margin-bottom:15px; color:#fff; text-decoration:none; }
+
+  /* ---------- MAIN CONTENT ---------- */
+  .main {
+    margin-left:200px;
+    padding:100px 20px 20px 20px;
+    display:flex;
+    justify-content:center;
+  }
+
+  /* ---------- FROSTY POST CONTAINER ---------- */
+  .post {
+    max-width:600px;
+    width:100%;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(18px);
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:20px;
+    padding:25px;
+  }
+
+  .post img { width:100%; border-radius:10px; margin-bottom:15px; }
+  .user { display:flex; align-items:center; gap:10px; margin-bottom:15px; }
+  .user img { width:40px; height:40px; border-radius:50%; }
+
+  .comments { margin-top:20px; max-height:300px; overflow-y:auto; }
+  .comment { padding:10px; border-top:1px solid rgba(255,255,255,0.1); }
+  .comment:first-child { border-top:none; }
+
+  .add-comment { display:flex; margin-top:15px; gap:10px; }
+  .add-comment input { flex:1; padding:10px; border-radius:8px; border:none; outline:none; }
+  .add-comment button {
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    background: rgba(255,255,255,0.15);
+    color:#fff;
+    cursor:pointer;
+  }
+  .add-comment button:hover { background: rgba(255,255,255,0.25); }
+</style>
+</head>
+<body>
+
+<!-- VIDEO BACKGROUND -->
+<div class="bg-video">
+  <video autoplay muted loop>
+    <source src="185c6cb666179a02d21b0edf03179d84 (3).mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a href="#">Dashboard</a>
+  <a href="#">Posts</a>
+  <a href="#">Profile</a>
+  <a href="#">Settings</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="post" id="post-container">
+    <!-- Post content will load here -->
+  </div>
+</div>
+
+<script>
+const db = {
+  "posts": {
+    "post1": {"id":"post1","user":"Alice","pfp":"https://randomuser.me/api/portraits/women/65.jpg","postImg":"https://picsum.photos/250/150?random=1","text":"I found a lost wallet near the park!","comments":[{"user":"Bob","text":"Wow, good job!"},{"user":"Charlie","text":"I hope the owner finds it!"}]},
+    "post2": {"id":"post2","user":"Bob","pfp":"https://randomuser.me/api/portraits/men/32.jpg","postImg":"https://picsum.photos/250/150?random=2","text":"I lost my keys yesterday, anyone seen them?","comments":[{"user":"Alice","text":"Did you check the park?"},{"user":"Eve","text":"Hope you find them soon!"}]},
+    "post3": {"id":"post3","user":"Charlie","pfp":"https://randomuser.me/api/portraits/men/44.jpg","postImg":"https://picsum.photos/250/150?random=3","text":"Found a stray dog, looking for the owner.","comments":[{"user":"David","text":"Take him to the shelter!"},{"user":"Frank","text":"Poor thing, hope it finds home."}]},
+    "post4": {"id":"post4","user":"David","pfp":"https://randomuser.me/api/portraits/women/21.jpg","postImg":"https://picsum.photos/250/150?random=4","text":"Lost my sunglasses at the beach, help!","comments":[{"user":"Alice","text":"Beach lost and found might help."},{"user":"Bob","text":"Did anyone see them floating?"}]},
+    "post5": {"id":"post5","user":"Eve","pfp":"https://randomuser.me/api/portraits/men/11.jpg","postImg":"https://picsum.photos/250/150?random=5","text":"Found a set of car keys near the mall.","comments":[{"user":"Charlie","text":"Maybe check the lost and found at the mall."}]},
+    "post6": {"id":"post6","user":"Frank","pfp":"https://randomuser.me/api/portraits/women/90.jpg","postImg":"https://picsum.photos/250/150?random=6","text":"I lost my wallet at the bus stop, anyone found it?","comments":[{"user":"David","text":"Check the bus company's lost items."},{"user":"Eve","text":"Hope you find it soon!"}]}
+  }
+};
+
+// ======= KEEP ORIGINAL POST LOGIC =======
+const urlParams = new URLSearchParams(window.location.search);
+const postId = urlParams.get('id');
+const post = db.posts[postId];
+
+const container = document.getElementById('post-container');
+
+if(post){
+  container.innerHTML = `
+    <div class="user"><img src="${post.pfp}"><strong>${post.user}</strong></div>
+    <img src="${post.postImg}">
+    <p>${post.text}</p>
+    <div class="comments" id="comments">
+      <h3>Comments</h3>
+      ${post.comments.map(c => `<div class="comment"><strong>${c.user}:</strong> ${c.text}</div>`).join('')}
+    </div>
+    <div class="add-comment">
+      <input type="text" id="comment-input" placeholder="Add a comment...">
+      <button id="send-comment">Send</button>
+    </div>
+  `;
+
+  const commentsDiv = document.getElementById('comments');
+  document.getElementById('send-comment').addEventListener('click', ()=>{
+    const input = document.getElementById('comment-input');
+    if(input.value.trim() !== ''){
+      const newComment = document.createElement('div');
+      newComment.classList.add('comment');
+      newComment.innerHTML = `<strong>You:</strong> ${input.value}`;
+      commentsDiv.appendChild(newComment);
+      input.value = '';
+      commentsDiv.scrollTop = commentsDiv.scrollHeight;
+    }
+  });
+
+} else {
+  container.innerHTML = `<p>Post not found.</p>`;
+}
+</script>
+
+</body>
+</html>

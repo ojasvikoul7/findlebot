@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Locator</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box;}
+body, html {height:100%; font-family: Arial, sans-serif; color:#fff; overflow-x:hidden;}
+
+.hero {
+  position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; overflow:hidden;
+}
+.hero video {
+  width:100%; height:100%; object-fit:cover;
+}
+
+.navbar {
+  position: fixed; top:0; left:0; width:100%; height:70px;
+  display:flex; justify-content: space-between; align-items:center;
+  padding:0 50px; background: rgba(0,0,0,0.35); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  border-bottom:2px solid rgba(255,255,255,0.1); z-index:10;
+}
+.navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; font-size:1.1rem; }
+.navbar a:hover { color:#ff0; }
+
+.sidebar {
+  position: fixed; top:70px; left:0; width:220px; height:calc(100% - 70px);
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  padding:25px; border-right:2px solid rgba(255,255,255,0.1);
+}
+.sidebar a { display:block; margin-bottom:20px; color:#fff; text-decoration:none; font-weight:bold; font-size:1rem; }
+.sidebar a:hover { color:yellow; }
+
+.main-content {
+  margin-left:220px; padding:120px 30px 30px 30px;
+  display:flex; flex-direction:column; align-items:center;
+}
+
+.frosty-box {
+  width:100%; max-width:1000px;
+  background: rgba(255,255,255,0.03); 
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border:2px solid rgba(255,255,255,0.15); border-radius:25px;
+  padding:30px;
+}
+
+.frosty-box h2 {margin-bottom:20px; font-size:2rem; text-align:center;}
+
+input[type="text"] {
+  padding:12px 15px; border-radius:15px; border:none; outline:none; width:100%;
+  margin-bottom:10px; background: rgba(255,255,255,0.05); color:#fff; font-size:1rem;
+}
+
+button {
+  padding:10px 20px; border:none; border-radius:15px;
+  background: rgba(255,255,255,0.1); color:#fff; cursor:pointer; font-size:1rem;
+}
+button:hover { background: rgba(255,255,255,0.2); }
+
+#suggestions {
+  position:absolute; top:180px; width:calc(100% - 60px); 
+  background: rgba(255,255,255,0.05); color:#fff; border-radius:10px; max-height:150px; overflow-y:auto; z-index:5;
+}
+
+#suggestions div {
+  padding:10px; cursor:pointer;
+}
+#suggestions div:hover {background: rgba(255,255,255,0.15);}
+
+.departments {
+  display:flex; flex-wrap:wrap; gap:15px; margin-top:20px; justify-content:center;
+}
+.departments div {
+  padding:10px 15px; background: rgba(255,255,255,0.05); border-radius:15px; cursor:pointer;
+  transition:0.2s;
+}
+.departments div:hover {background: rgba(255,255,255,0.15);}
+
+.result-box {
+  margin-top:20px; padding:15px; border-radius:15px; background: rgba(255,255,255,0.05); max-height:400px; overflow-y:auto;
+}
+
+::-webkit-scrollbar {width:6px;}
+::-webkit-scrollbar-thumb {background:rgba(255,255,255,0.3); border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="3bc4693a457a865a28e35cb47615bf5e - ROTATE - Videobolt.net (1).mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+     <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+</div>
+
+<div class="sidebar">
+   <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+</div>
+
+<div class="main-content">
+  <div class="frosty-box">
+    <h2>Staff Locator</h2>
+    <input type="text" id="staffInput" placeholder="Type staff name...">
+    <div id="suggestions"></div>
+    <button onclick="searchStaff()">Search</button>
+
+    <div class="departments">
+      <div onclick="filterDepartment('HR')">HR Department</div>
+      <div onclick="filterDepartment('Humanities')">Humanities Department</div>
+      <div onclick="filterDepartment('Hotel Management')">Hotel Management</div>
+      <div onclick="filterDepartment('CSE')">Computer Science & Engineering</div>
+      <div onclick="filterDepartment('Electronics')">Electronics</div>
+    </div>
+
+    <div class="result-box" id="results"></div>
+  </div>
+</div>
+
+<script>
+const staffDB = [
+  {name:"Dr. Garima Pandey", contact:"9876543210", email:"garima.pandey@srmist.edu.in", cabin:"101", floor:"1", dept:"CSE"},
+  {name:"Dr. Pallavi Jain", contact:"9876543221", email:"pallavi.jain@srmist.edu.in", cabin:"202", floor:"2", dept:"HR"},
+  {name:"Dr. Kalpana Patel", contact:"9876543232", email:"kalpana.patel@srmist.edu.in", cabin:"303", floor:"3", dept:"Humanities"},
+  {name:"Dr. Ravi Tomar", contact:"9876543243", email:"ravi.tomar@srmist.edu.in", cabin:"404", floor:"4", dept:"Hotel Management"},
+  {name:"Dr. Amiya Das", contact:"9876543254", email:"amiya.das@srmist.edu.in", cabin:"505", floor:"5", dept:"Electronics"},
+  {name:"Dr. Nidhi Pathak", contact:"9876543265", email:"nidhi.pathak@srmist.edu.in", cabin:"106", floor:"1", dept:"CSE"},
+  {name:"Dr. Ajay Singh Yadav", contact:"9876543276", email:"ajay.yadav@srmist.edu.in", cabin:"207", floor:"2", dept:"CSE"},
+  {name:"Dr. Sunita Sharma", contact:"9876543287", email:"sunita.sharma@srmist.edu.in", cabin:"308", floor:"3", dept:"Maths"},
+  {name:"Dr. Ankit Verma", contact:"9876543298", email:"ankit.verma@srmist.edu.in", cabin:"409", floor:"4", dept:"Physics"},
+  {name:"Dr. Priya Reddy", contact:"9876543309", email:"priya.reddy@srmist.edu.in", cabin:"510", floor:"5", dept:"Chemistry"},
+  {name:"Dr. Rohit Mehta", contact:"9876543310", email:"rohit.mehta@srmist.edu.in", cabin:"111", floor:"1", dept:"CSE"},
+  {name:"Dr. Meera Nair", contact:"9876543321", email:"meera.nair@srmist.edu.in", cabin:"212", floor:"2", dept:"Biotech"},
+  {name:"Dr. Karan Kapoor", contact:"9876543332", email:"karan.kapoor@srmist.edu.in", cabin:"313", floor:"3", dept:"Mechanical"},
+  {name:"Dr. Ritu Agarwal", contact:"9876543343", email:"ritu.agarwal@srmist.edu.in", cabin:"414", floor:"4", dept:"Electrical"},
+  {name:"Dr. Vikas Sharma", contact:"9876543354", email:"vikas.sharma@srmist.edu.in", cabin:"515", floor:"5", dept:"Civil"},
+  {name:"Dr. Shreya Sen", contact:"9876543365", email:"shreya.sen@srmist.edu.in", cabin:"116", floor:"1", dept:"Design"},
+  {name:"Dr. Manish Choudhary", contact:"9876543376", email:"manish.choudhary@srmist.edu.in", cabin:"217", floor:"2", dept:"CSE"},
+  {name:"Dr. Naina Bhatt", contact:"9876543387", email:"naina.bhatt@srmist.edu.in", cabin:"318", floor:"3", dept:"HR"},
+  {name:"Dr. Aditya Joshi", contact:"9876543398", email:"aditya.joshi@srmist.edu.in", cabin:"419", floor:"4", dept:"Physics"},
+  {name:"Dr. Suman Rao", contact:"9876543409", email:"suman.rao@srmist.edu.in", cabin:"520", floor:"5", dept:"Chemistry"}
+];
+
+// Search staff by name
+function searchStaff() {
+  const val = document.getElementById('staffInput').value.toLowerCase().trim();
+  const results = staffDB.filter(s => s.name.toLowerCase().includes(val));
+  displayResults(results);
+}
+
+// Filter by department
+function filterDepartment(dept) {
+  const results = staffDB.filter(s => s.dept === dept);
+  displayResults(results);
+}
+
+// Display results
+function displayResults(arr) {
+  const resultsDiv = document.getElementById('results');
+  if(arr.length === 0) {
+    resultsDiv.innerHTML = "<p>No results found</p>";
+    return;
+  }
+  resultsDiv.innerHTML = arr.map(s => `
+    <div>
+      <h3>${s.name}</h3>
+      <p>Department: ${s.dept}</p>
+      <p>Floor: ${s.floor}, Cabin: ${s.cabin}</p>
+      <p>Contact: ${s.contact}</p>
+      <p>Email: ${s.email}</p>
+    </div>
+  `).join('');
+}
+
+// Suggestions dropdown
+const staffInput = document.getElementById('staffInput');
+const suggestions = document.getElementById('suggestions');
+
+staffInput.addEventListener('input', () => {
+  const val = staffInput.value.toLowerCase().trim();
+  if(!val) { suggestions.innerHTML=''; return; }
+  const filtered = staffDB.filter(s => s.name.toLowerCase().includes(val));
+  suggestions.innerHTML = filtered.map(s => `<div onclick="selectSuggestion('${s.name.replace(/'/g,"\\'")}')">${s.name}</div>`).join('');
+});
+
+function selectSuggestion(name) {
+  staffInput.value = name;
+  suggestions.innerHTML='';
+}
+</script>
+
+</body>
+</html>

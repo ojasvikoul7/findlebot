@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Findle - Profile</title>
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box;}
+    body, html {height:100%; font-family: Arial, sans-serif; color:#fff; overflow-x:hidden;}
+
+    .hero {
+      position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; overflow:hidden;
+    }
+    .hero video {width:100%; height:100%; object-fit:cover;}
+
+    .navbar {
+      position: fixed; top:0; left:0; width:100%; height:70px;
+      display:flex; justify-content: space-between; align-items:center;
+      padding:0 50px; background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border-bottom:2px solid rgba(255,255,255,0.1); z-index:10;
+    }
+    .navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; font-size:1.1rem; }
+    .navbar a:hover { color:#ff0; }
+
+    .sidebar {
+      position: fixed; top:70px; left:0; width:220px; height:calc(100% - 70px);
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      padding:25px; border-right:2px solid rgba(255,255,255,0.1);
+    }
+    .sidebar a { display:block; margin-bottom:20px; color:#fff; text-decoration:none; font-weight:bold; font-size:1rem; }
+    .sidebar a:hover { color:yellow; }
+
+    .main-content {
+      margin-left:220px; padding:120px 30px 30px 30px;
+      display:flex; flex-direction:column; align-items:center;
+    }
+
+    .frosty-box {
+      width:100%; max-width:700px;
+      background: rgba(255,255,255,0.03); 
+      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(15px);
+      border:2px solid rgba(255,255,255,0.15); border-radius:25px;
+      padding:30px;
+      text-align:center;
+    }
+    .frosty-box h2 {margin-bottom:20px; font-size:2rem; text-align:center;}
+
+    input[type="text"], textarea {
+      padding:12px 15px; border-radius:15px; border:none; outline:none; width:100%;
+      margin-bottom:15px; background: rgba(255,255,255,0.05); color:#fff; font-size:1rem;
+    }
+    textarea {resize:none; height:80px;}
+
+    button {
+      padding:10px 20px; border:none; border-radius:15px;
+      background: rgba(255,255,255,0.1); color:#fff; cursor:pointer; font-size:1rem;
+    }
+    button:hover { background: rgba(255,255,255,0.2); }
+
+    #profileView {display:none;}
+
+    .profile-pic {
+      width:120px; height:120px; border-radius:50%; background:black;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 15px auto; font-size:2rem; font-weight:bold; color:#fff;
+    }
+
+    #bioSuggestions {margin:10px 0; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+    #bioSuggestions button {font-size:0.9rem; padding:6px 12px; border-radius:12px;}
+    #bioLabel {margin-bottom:8px; font-size:0.95rem; color:#fffa;}
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="185c6cb666179a02d21b0edf03179d84 (3).mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+    <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+</div>
+
+<div class="sidebar">
+   <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+</div>
+
+<div class="main-content">
+  <div class="frosty-box">
+    <!-- Save Profile Form -->
+    <div id="profileForm">
+      <h2>Save Your Profile</h2>
+      <input type="text" id="name" placeholder="Your Name">
+      <input type="text" id="mobileno" placeholder="Mobile no.">
+      <textarea id="bio" placeholder="Bio..."></textarea>
+
+      <!-- ✨ Bio Suggestions -->
+      <div id="bioLabel">Bio Suggestions:</div>
+      <div id="bioSuggestions">
+        <button type="button" onclick="fillBio('Just winging it ✨')">Just winging it ✨</button>
+        <button type="button" onclick="fillBio('Pizza > People 🍕')">Pizza > People 🍕</button>
+        <button type="button" onclick="fillBio('Professional napper 😴')">Professional napper 😴</button>
+        <button type="button" onclick="fillBio('Caffeine-dependent life form ☕')">Caffeine-dependent life form ☕</button>
+        <button type="button" onclick="fillBio('Kindness is free 💕')">Kindness is free 💕</button>
+        <button type="button" onclick="fillBio('Lost in playlists 🎶')">Lost in playlists 🎶</button>
+      </div>
+
+      <button onclick="saveProfile()">Save Profile</button>
+    </div>
+
+    <!-- Profile View -->
+    <div id="profileView">
+      <div class="profile-pic" id="profilePic">?</div>
+      <h2 id="viewName"></h2>
+      <p id="viewUsername"></p>
+      <p id="viewBio"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function saveProfile(){
+    const name = document.getElementById("name").value.trim();
+    const username = document.getElementById("mobileno").value.trim();
+    const bio = document.getElementById("bio").value.trim();
+
+    if(!name || !username){ alert("Please fill in name and username!"); return; }
+
+    sessionStorage.setItem("profile", JSON.stringify({name, username, bio}));
+    showProfile({name, username, bio});
+  }
+
+  function showProfile(profile){
+    document.getElementById("profileForm").style.display = "none";
+    document.getElementById("profileView").style.display = "block";
+
+    document.getElementById("profilePic").innerText = profile.name.charAt(0).toUpperCase();
+    document.getElementById("viewName").innerText = profile.name;
+    document.getElementById("viewUsername").innerText = "+91" + profile.username;
+    document.getElementById("viewBio").innerText = profile.bio || "No bio yet...";
+  }
+
+  function fillBio(text) {
+    document.getElementById("bio").value = text;
+  }
+
+  window.onload = () => {
+    const saved = sessionStorage.getItem("profile");
+    if(saved){ showProfile(JSON.parse(saved)); }
+  };
+</script>
+
+</body>
+</html>

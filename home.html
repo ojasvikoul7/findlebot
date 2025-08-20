@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Findle Home</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body, html { height:100%; font-family: Arial, sans-serif; overflow-x:hidden; color:#fff; }
+
+  /* ---------- VIDEO BACKGROUND ---------- */
+  .hero {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:-1;
+    overflow:hidden;
+  }
+  .hero video {
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar {
+    position: fixed;
+    top:0; left:0; width:100%;
+    height:70px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding:0 50px;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(15px);
+    border-bottom:2px solid rgba(255,255,255,0.1);
+    z-index:10;
+  }
+  .navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; font-size:1.1rem; }
+  .navbar a:hover { color:#ff0; }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    position: fixed;
+    top:70px; left:0;
+    width:220px;
+    height:calc(100% - 70px);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(15px);
+    padding:25px;
+    border-right:2px solid rgba(255,255,255,0.1);
+    z-index:9;
+  }
+  .sidebar a { display:block; margin-bottom:20px; color:#fff; text-decoration:none; font-weight:bold; font-size:1rem; }
+  .sidebar a:hover { color:yellow; }
+
+  /* ---------- MAIN CONTENT ---------- */
+  .main-content {
+    margin-left:220px;
+    padding:120px 30px 30px 30px;
+  }
+
+  /* ---------- CAROUSEL ---------- */
+  .carousel-wrapper {
+    overflow:hidden;
+    width:100%;
+  }
+
+  .carousel-container {
+    display:flex;
+    gap:25px;
+    animation: scroll 30s linear infinite;
+  }
+
+  .post-card {
+    flex-shrink:0;
+    width:200px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(18px);
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:14px;
+    padding:15px;
+    transition: transform 0.3s;
+  }
+  .post-card:hover { transform: scale(1.05); }
+
+  .post-card img { width:100%; border-radius:10px; margin-bottom:10px; }
+  .post-card .user { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .post-card .user img { width:30px; height:30px; border-radius:50%; }
+
+  /* ---------- VIEW POST BUTTON ---------- */
+  .view-post-btn {
+    display:block;
+    margin-top:10px;
+    padding:6px 12px;
+    font-size:0.85rem;
+    color:#fff;
+    text-align:center;
+    text-decoration:none;
+    border-radius:8px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    border:1px solid rgba(255,255,255,0.25);
+    transition: all 0.2s ease;
+  }
+  .view-post-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- VIDEO BACKGROUND -->
+<div class="hero">
+  <video autoplay muted loop>
+    <source src="b0fef3e175bf2a276113a9ce22162d55.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+    <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <h2>Latest Posts</h2>
+  <div class="carousel-wrapper">
+    <div class="carousel-container" id="carousel">
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Cat Avatar">
+    <strong>Arjun Verma</strong>
+  </div>
+  <p>I found a lost wallet black of CK near the canteen!</p>
+  <a href="#" class="view-post-btn" data-post-id="post1">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616409.png" alt="Dog Avatar">
+    <strong>Tej Singh</strong>
+  </div>
+  <p>I lost my bike key yesterday it has spiderman keychain, anyone seen them?</p>
+  <a href="#" class="view-post-btn" data-post-id="post2">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616410.png" alt="Rabbit Avatar">
+    <strong>Aleena Rehmani</strong>
+  </div>
+  <p>I found an ID Card near Black gate, it belongs to Sushmita Sharma from AIML</p>
+  <a href="#" class="view-post-btn" data-post-id="post3">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616411.png" alt="Fox Avatar">
+    <strong>Raghav Kumar</strong>
+  </div>
+  <p>I think i dropped boat airdopes pro near yellow canteen, has anyone seen them?!</p>
+  <a href="#" class="view-post-btn" data-post-id="post4">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616412.png" alt="Bear Avatar">
+    <strong>Anushka Verma</strong>
+  </div>
+  <p>Guys there is a bagpack on canteen's bench, Its of safari and is black in color.</p>
+  <a href="#" class="view-post-btn" data-post-id="post5">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616413.png" alt="Penguin Avatar">
+    <strong>Kartika Yadav</strong>
+  </div>
+  <p>I lost my wallet in the bus 5379, anyone found it?</p>
+  <a href="#" class="view-post-btn" data-post-id="post6">View Post</a>
+</div>
+
+<!-- Duplicate carousel items (optional) -->
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Cat Avatar">
+    <strong>Arjun Verma</strong>
+  </div>
+  <p>I found a lost wallet black of CK near the canteen!</p>
+  <a href="#" class="view-post-btn" data-post-id="post1">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616409.png" alt="Dog Avatar">
+    <strong>Tej Singh</strong>
+  </div>
+  <p>I lost my bike key yesterday it has spiderman keychain, anyone seen them?</p>
+  <a href="#" class="view-post-btn" data-post-id="post2">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616410.png" alt="Rabbit Avatar">
+    <strong>Aleena Rehmani</strong>
+  </div>
+  <p>I found an ID Card near Black gate, it belongs to Sushmita Sharma from AIML</p>
+  <a href="#" class="view-post-btn" data-post-id="post3">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616411.png" alt="Fox Avatar">
+    <strong>Raghav Kumar</strong>
+  </div>
+  <p>I think i dropped boat airdopes pro near yellow canteen, has anyone seen them?!</p>
+  <a href="#" class="view-post-btn" data-post-id="post4">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616412.png" alt="Bear Avatar">
+    <strong>Anushka Verma</strong>
+  </div>
+  <p>Guys there is a bagpack on canteen's bench, Its of safari and is black in color.</p>
+  <a href="#" class="view-post-btn" data-post-id="post5">View Post</a>
+</div>
+
+<div class="post-card">
+  <div class="user">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616413.png" alt="Penguin Avatar">
+    <strong>Kartika Yadav</strong>
+  </div>
+  <p>I lost my wallet in the bus 5379, anyone found it?</p>
+  <a href="#" class="view-post-btn" data-post-id="post6">View Post</a>
+</div>
+
+
+    </div>
+  </div>
+</div>
+<div class="echo-home" onclick="window.location.href='echo.html'">
+  <img src="echo.png" alt="Echo Logo" class="echo-logo">
+  <h1>ECHO BOT</h1>
+  <p>Ask Echo for lost and found</p>
+</div>
+<div class="staff-section">
+  <a href="staff.html" class="staff-button">
+    <img src="staff.png" alt="Staff Locator Logo" class="staff-logo">
+    <h1>STAFF LOCATOR</h1>
+    <p>Find your staff quickly</p>
+  </a>
+</div>
+<div id="viewPostModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="modal-user">
+      <img id="modalUserImg" src="" alt="User">
+      <strong id="modalUserName"></strong>
+    </div>
+    <div class="modal-post-text" id="modalPostText"></div>
+    <div class="comments-section">
+      <h4>Comments</h4>
+      <div id="commentsList"></div>
+      <input type="text" id="commentInput" placeholder="Add a comment">
+      <button id="addCommentBtn">Send</button>
+    </div>
+  </div>
+</div>
+
+
+<style>
+.echo-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  cursor: pointer;
+  text-align: center;
+ 
+}
+
+.echo-home:hover h1, 
+.echo-home:hover p {
+    transform: scale(1.05);
+  color: rgb(246, 248, 137); /* optional hover effect */
+}
+
+.echo-logo {
+  width: 300px; /* adjust size */
+  height: auto;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+  margin-bottom: -40px;
+  margin-top: -30px;
+}
+
+.echo-home:hover .echo-logo {
+  transform: scale(1.1); /* slight zoom on hover */
+}
+
+.echo-home h1 {
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 0px;
+  font-weight: bold;
+}
+
+.echo-home p {
+  font-size: 1.2rem;
+  color: #ddd;
+}
+
+.staff-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.staff-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.staff-button:hover {
+  transform: scale(1.05);
+  color: rgb(253, 255, 161); /* optional hover effect */
+}
+
+.staff-logo {
+ width: 400px; /* adjust size */
+  height: auto;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+  margin-bottom: -40px;
+  margin-top: -30px;
+}
+
+.staff-button:hover .staff-logo {
+  transform: scale(1.1);
+}
+
+.staff-button h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.staff-button p {
+  margin: 5px 0 0 0;
+  font-size: 1rem;
+  margin-bottom: 30px;
+}
+
+</style>
+<style>
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 999; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); 
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: rgba(255,255,255,0.05);  /* glassy */
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  margin: 5% auto;
+  padding: 25px;
+  color: #fff;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+}
+
+.close {
+  color: #fff;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: -10px;
+}
+
+.modal-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.modal-user img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.modal-user strong {
+  font-size: 1.1rem;
+}
+
+.modal-post-text {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.comments-section {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 10px 15px;
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.comments-section h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+#commentsList div {
+  background: rgba(255,255,255,0.1);
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+#commentInput {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+#addCommentBtn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+#addCommentBtn:hover {
+  background: rgba(255,255,255,0.25);
+}
+</style>
+
+<script>
+// Store fake posts content
+const postsData = {
+  post1: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616408.png',
+    userName: 'Arjun Verma',
+    postText: 'I found a lost wallet black of CK near the canteen!',
+    comments: ['Nice!', 'Hope it reaches the owner.']
+  },
+  post2: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616409.png',
+    userName: 'Tej Singh',
+    postText: 'I lost my bike key yesterday it has spiderman keychain, anyone seen them?',
+    comments: ['I think I saw it near the library.', 'Good luck!']
+  },
+  post3: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616410.png',
+    userName: 'Aleena Rehmani',
+    postText: 'I found an ID Card near Black gate, it belongs to Sushmita Sharma from AIML',
+    comments: ['Found it! Thanks for posting.', 'Someone claim it quickly.']
+  },
+  post4: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616411.png',
+    userName: 'Raghav Kumar',
+    postText: 'I think i dropped boat airdopes pro near yellow canteen, has anyone seen them?!',
+    comments: ['Check the lost and found!', 'Oh no!']
+  },
+  post5: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616412.png',
+    userName: 'Anushka Verma',
+    postText: "Guys there is a bagpack on canteen's bench, Its of safari and is black in color.",
+    comments: ['Someone must take it!', 'I’ll keep an eye.']
+  },
+  post6: {
+    userImg: 'https://cdn-icons-png.flaticon.com/512/616/616413.png',
+    userName: 'Kartika Yadav',
+    postText: 'I lost my wallet in the bus 5379, anyone found it?',
+    comments: ['Try the bus office.', 'Hope you get it back!']
+  }
+};
+
+// Elements
+const modal = document.getElementById('viewPostModal');
+const modalUserImg = document.getElementById('modalUserImg');
+const modalUserName = document.getElementById('modalUserName');
+const modalPostText = document.getElementById('modalPostText');
+const commentsList = document.getElementById('commentsList');
+const commentInput = document.getElementById('commentInput');
+const addCommentBtn = document.getElementById('addCommentBtn');
+const closeBtn = document.querySelector('.modal .close');
+
+let currentComments = [];
+
+// Open modal
+document.querySelectorAll('.view-post-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const postId = btn.dataset.postId;
+    const post = postsData[postId];
+
+    if (post) {
+      modalUserImg.src = post.userImg;
+      modalUserName.textContent = post.userName;
+      modalPostText.textContent = post.postText;
+
+      currentComments = [...post.comments]; // copy
+      renderComments();
+      modal.style.display = 'block';
+    }
+  });
+});
+
+// Close modal
+closeBtn.addEventListener('click', () => modal.style.display = 'none');
+window.addEventListener('click', e => {
+  if (e.target == modal) modal.style.display = 'none';
+});
+
+// Add comment
+addCommentBtn.addEventListener('click', () => {
+  const comment = commentInput.value.trim();
+  if(comment) {
+    currentComments.push(comment);
+    renderComments();
+    commentInput.value = '';
+  }
+});
+
+function renderComments() {
+  commentsList.innerHTML = '';
+  currentComments.forEach(c => {
+    const div = document.createElement('div');
+    div.textContent = c;
+    commentsList.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>

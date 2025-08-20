@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Post - Findle</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box;}
+body, html {height:100%; font-family: Arial, sans-serif; color:#fff; overflow-x:hidden;}
+
+.hero {
+  position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; overflow:hidden;
+}
+.hero video { width:100%; height:100%; object-fit:cover; display:block; }
+
+.navbar {
+  position: fixed; top:0; left:0; width:100%; height:70px;
+  display:flex; justify-content: space-between; align-items:center;
+  padding:0 50px; background: rgba(0,0,0,0.35); backdrop-filter: blur(15px);
+  border-bottom:2px solid rgba(255,255,255,0.1); z-index:10;
+}
+.navbar a { color:#fff; text-decoration:none; margin-left:25px; font-weight:bold; font-size:1.1rem; }
+.navbar a:hover { color:#ff0; }
+
+.sidebar {
+  position: fixed; top:70px; left:0; width:220px; height:calc(100% - 70px);
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); padding:25px; border-right:2px solid rgba(255,255,255,0.1);
+}
+.sidebar a { display:block; margin-bottom:20px; color:#fff; text-decoration:none; font-weight:bold; font-size:1rem; }
+.sidebar a:hover { color:yellow; }
+
+.main-content {
+  margin-left:220px; padding:120px 30px 30px 30px;
+  display:flex; flex-direction:column; align-items:center;
+}
+
+.frosty-box {
+  max-width:700px; width:100%; background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px); border:2px solid rgba(255,255,255,0.15);
+  border-radius:20px; padding:30px; display:flex; flex-direction:column; gap:15px;
+}
+
+input[type="text"], textarea {
+  width:100%; padding:12px 15px; border-radius:15px; border:none; outline:none;
+  background: rgba(255,255,255,0.05); color:#fff; font-size:1rem;
+}
+textarea { resize: vertical; min-height:100px; }
+
+button {
+  padding:12px 20px; border:none; border-radius:15px;
+  background: rgba(255,255,255,0.1); color:#fff; cursor:pointer; font-size:1rem;
+}
+button:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <video autoplay muted loop>
+    <source src="185c6cb666179a02d21b0edf03179d84 (3).mp4" type="video/mp4">
+  </video>
+</div>
+
+<div class="navbar">
+  <div class="logo"><a href="#">Findle</a></div>
+  <div class="links">
+    <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+  </div>
+</div>
+
+<div class="sidebar">
+  <a href="home.html">Home</a>
+    <a href="echo.html">Echo Bot</a>
+    <a href="staff.html">Staff Locator</a>
+    <a href="yourprofile.html">Your Profile</a>
+    <a href="createpost.html">Create Post</a>
+    <a href="yourposts.html">Your posts</a>
+</div>
+
+<div class="main-content">
+  <div class="frosty-box">
+    <h2>Create a Post</h2>
+    <input type="text" id="userName" placeholder="Your Name (optional)">
+    <input type="text" id="userPfp" placeholder="Profile Image URL (optional)">
+    <textarea id="postText" placeholder="What's on your mind?"></textarea>
+    <input type="text" id="postImg" placeholder="Image URL (optional)">
+    <button onclick="submitPost()">Submit Post</button>
+  </div>
+</div>
+
+<script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDW4IF5mGdiBIMId6dOyV6ONt-OX_YEoAg",
+  authDomain: "findle-80895.firebaseapp.com",
+  databaseURL: "https://findle-80895-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "findle-80895",
+  storageBucket: "findle-80895.appspot.com",
+  messagingSenderId: "494230063495",
+  appId: "1:494230063495:web:963556b2caab838c1e2b22",
+  measurementId: "G-4V4H12932C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Submit post function
+function submitPost() {
+  const name = document.getElementById("userName").value || "Anonymous";
+  const pfp = document.getElementById("userPfp").value || `https://i.pravatar.cc/150?u=${Date.now()}`;
+  const text = document.getElementById("postText").value.trim();
+  const postImg = document.getElementById("postImg").value || "";
+
+  if(!text) { alert("Please enter some text for the post."); return; }
+
+  const postData = { user: name, pfp, text, postImg };
+
+  // Save to sessionStorage for session-only posts
+  let sessionPosts = JSON.parse(sessionStorage.getItem("sessionPosts") || "[]");
+  sessionPosts.push(postData);
+  sessionStorage.setItem("sessionPosts", JSON.stringify(sessionPosts));
+
+  push(ref(db, 'posts'), postData)
+    .then(() => { 
+      alert("Post submitted successfully!"); 
+      document.getElementById("userName").value = "";
+      document.getElementById("userPfp").value = "";
+      document.getElementById("postText").value = "";
+      document.getElementById("postImg").value = "";
+    })
+    .catch(err => alert("Error submitting post: " + err));
+}
+
+// Make global for onclick
+window.submitPost = submitPost;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Findle Auth</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body, html{height:100%;overflow:hidden;}
+
+/* Navbar */
+.navbar{
+  width:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+  position:absolute;
+  top:0;
+  z-index:10;
+}
+.navbar .logo{color:#fff;font-size:1.5rem;font-weight:bold;}
+.navbar .nav-links a{
+  color:#fff;
+  text-decoration:none;
+  margin-left:15px;
+  font-weight:500;
+  transition:0.3s;
+}
+.navbar .nav-links a:hover{color:#ff69b4;}
+
+/* Hero Section */
+.hero{position:relative;height:100vh;display:flex;justify-content:center;align-items:center;}
+.hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;}
+.overlay{position:absolute;width:100%;height:100%;background:linear-gradient(135deg, rgba(255,0,150,0.3), rgba(0,204,255,0.3));mix-blend-mode:overlay;pointer-events:none;z-index:-1;animation:gradientShift 15s ease infinite alternate;}
+@keyframes gradientShift{0%{background:linear-gradient(135deg, rgba(255,0,150,0.3), rgba(0,204,255,0.3));}50%{background:linear-gradient(135deg, rgba(0,204,255,0.3), rgba(255,0,150,0.3));}100%{background:linear-gradient(135deg, rgba(255,0,150,0.3), rgba(0,204,255,0.3));}}
+
+/* Auth Box */
+.auth-box{position:relative;width:350px;padding:40px;background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border-radius:20px;box-shadow:inset 0 6px 12px rgba(255,255,255,0.35),0 12px 35px rgba(0,0,0,0.4);color:#fff;text-align:center;z-index:5;}
+.auth-box h2{margin-bottom:20px;font-size:1.8rem;}
+.auth-box input{width:100%;padding:12px;margin:10px 0;border-radius:50px;border:none;background:rgba(255,255,255,0.1);color:#fff;text-align:center;font-size:1rem;}
+.auth-box input::placeholder{color:rgba(255,255,255,0.7);}
+.auth-box button{width:100%;padding:12px;margin-top:20px;border-radius:50px;border:none;background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);color:#fff;font-size:1.1rem;cursor:pointer;transition:0.3s;}
+.auth-box button:hover{transform:scale(1.05);}
+.auth-toggle{margin-top:15px;color:#fff;cursor:pointer;text-decoration:underline;font-size:0.9rem;}
+.message{margin-top:10px;font-size:0.9rem;color:#ffbaba;}
+
+/* Continue as Guest */
+.guest-btn{
+  margin-top:15px;
+  padding:10px 20px;
+  border-radius:50px;
+  border:none;
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(20px);
+  color:#fff;
+  font-size:1rem;
+  cursor:pointer;
+  transition:0.3s;
+}
+.guest-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo">Findle</div>
+  <div class="nav-links">
+    <a href="">Home</a>
+    <a href="">Echo Bot</a>
+    <a href="">Staff Locator</a>
+    <a href="">Your Profile</a>
+    <a href="">Create Post</a>
+    <a href="">Your posts</a>
+  </div>
+</div>
+
+<div class="hero">
+  <video autoplay muted loop>
+    <source src="185c6cb666179a02d21b0edf03179d84.mov" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <div class="auth-box" id="auth-box">
+    <h2 id="form-title">Sign In</h2>
+    <input type="text" id="email-phone" placeholder="Email or Phone">
+    <input type="password" id="password" placeholder="Password">
+    <button id="auth-btn">Sign In</button>
+    <div class="auth-toggle" id="toggle-form">Don't have an account? Sign Up</div>
+    <div class="auth-toggle" id="forgot-pass">Forgot Password?</div>
+    <div class="message" id="message"></div>
+    <button class="guest-btn" id="guest-btn">Continue as Guest</button>
+  </div>
+</div>
+
+<script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDW4IF5mGdiBIMId6dOyV6ONt-OX_YEoAg",
+  authDomain: "findle-80895.firebaseapp.com",
+  projectId: "findle-80895",
+  storageBucket: "findle-80895.appspot.com",
+  messagingSenderId: "494230063495",
+  appId: "1:494230063495:web:963556b2caab838c1e2b22",
+  measurementId: "G-4V4H12932C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// DOM Elements
+const authBox = document.getElementById('auth-box');
+const authBtn = document.getElementById('auth-btn');
+const toggleForm = document.getElementById('toggle-form');
+const formTitle = document.getElementById('form-title');
+const forgotPass = document.getElementById('forgot-pass');
+const message = document.getElementById('message');
+const guestBtn = document.getElementById('guest-btn');
+
+let isSignIn = true;
+
+// Toggle Sign In / Sign Up
+toggleForm.addEventListener('click', ()=>{
+  isSignIn = !isSignIn;
+  formTitle.textContent = isSignIn ? "Sign In" : "Sign Up";
+  authBtn.textContent = isSignIn ? "Sign In" : "Sign Up";
+  toggleForm.textContent = isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In";
+  message.textContent = "";
+});
+
+// Auth button
+authBtn.addEventListener('click', async ()=>{
+  const emailPhone = document.getElementById('email-phone').value.trim();
+  const password = document.getElementById('password').value.trim();
+  message.style.color = "#ffbaba";
+
+  if(!emailPhone || !password){ message.textContent="Fill all fields!"; return;}
+
+  try{
+    if(isSignIn){
+      await signInWithEmailAndPassword(auth,emailPhone,password);
+      message.style.color = "#aaffaa";
+      message.textContent="Signed in successfully!";
+    }else{
+      await createUserWithEmailAndPassword(auth,emailPhone,password);
+      message.style.color = "#aaffaa";
+      message.textContent="Account created successfully!";
+      isSignIn=true;
+      formTitle.textContent="Sign In";
+      authBtn.textContent="Sign In";
+      toggleForm.textContent="Don't have an account? Sign Up";
+    }
+  }catch(error){
+    message.textContent = error.message;
+  }
+});
+
+// Forgot password
+forgotPass.addEventListener('click', async ()=>{
+  const emailPhone = document.getElementById('email-phone').value.trim();
+  if(!emailPhone){ message.textContent="Enter email for reset"; return;}
+  try{
+    await sendPasswordResetEmail(auth,emailPhone);
+    message.style.color="#aaffaa";
+    message.textContent="Password reset email sent!";
+  }catch(error){
+    message.style.color="#ffbaba";
+    message.textContent=error.message;
+  }
+});
+
+// Continue as Guest button
+guestBtn.addEventListener('click', ()=>{
+  window.location.href = "home.html"; // Redirect to guest page
+});
+</script>
+</body>
+</html>

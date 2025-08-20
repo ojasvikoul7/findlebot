@@ -1,0 +1,70 @@
+{
+  "posts": {
+    "post1": {
+      "id": "post1",
+      "user": "Aarav",
+      "pfp": "https://randomuser.me/api/portraits/men/75.jpg",
+      "postImg": "https://picsum.photos/250/150?random=11",
+      "text": "Found a college ID card near the canteen. Name says *Ritika Sharma*. DM if it's yours.",
+      "comments": [
+        {"user": "Riya", "text": "Good job, that’s important!"},
+        {"user": "Kabir", "text": "Maybe hand it over to admin office too."}
+      ]
+    },
+    "post2": {
+      "id": "post2",
+      "user": "Ritika",
+      "pfp": "https://randomuser.me/api/portraits/women/68.jpg",
+      "postImg": "https://picsum.photos/250/150?random=12",
+      "text": "Picked up a backpack from the library reading hall, looks heavy. Anyone missing it?",
+      "comments": [
+        {"user": "Ishaan", "text": "Post a pic of the keychain, that’ll help identify."},
+        {"user": "Meera", "text": "Could be mine, does it have a water bottle in the side pocket?"}
+      ]
+    },
+    "post3": {
+      "id": "post3",
+      "user": "Kabir",
+      "pfp": "https://randomuser.me/api/portraits/men/23.jpg",
+      "postImg": "https://picsum.photos/250/150?random=13",
+      "text": "Found a pair of wireless earbuds in the computer lab. White case. Anyone here? ",
+      "comments": [
+        {"user": "Sneha", "text": "Oh wow, those go missing all the time!"},
+        {"user": "Aarav", "text": "Check with the group sitting there in the evening."}
+      ]
+    },
+    "post4": {
+      "id": "post4",
+      "user": "Meera",
+      "pfp": "https://randomuser.me/api/portraits/women/29.jpg",
+      "postImg": "https://picsum.photos/250/150?random=14",
+      "text": "Spotted a black water bottle left in the sports ground near the basketball court.",
+      "comments": [
+        {"user": "Kabir", "text": "Could be from yesterday’s practice session."},
+        {"user": "Ishaan", "text": "If it’s steel with a dent on the side, it’s mine!"}
+      ]
+    },
+    "post5": {
+      "id": "post5",
+      "user": "Ishaan",
+      "pfp": "https://randomuser.me/api/portraits/men/56.jpg",
+      "postImg": "https://picsum.photos/250/150?random=15",
+      "text": "Found a notebook bundle in the seminar hall. Lots of handwritten notes inside.",
+      "comments": [
+        {"user": "Riya", "text": "Notes are life savers before exams 😭."},
+        {"user": "Sneha", "text": "Might belong to seniors, keep it safe."}
+      ]
+    },
+    "post6": {
+      "id": "post6",
+      "user": "Sneha",
+      "pfp": "https://randomuser.me/api/portraits/women/45.jpg",
+      "postImg": "https://picsum.photos/250/150?random=16",
+      "text": "Found an umbrella in the cafeteria, blue color with polka dots. DM if it’s yours.",
+      "comments": [
+        {"user": "Meera", "text": "Looks like Ananya’s, she always carries one."},
+        {"user": "Aarav", "text": "Monsoon season, umbrellas everywhere 😂."}
+      ]
+    }
+  }
+}
